@@ -1,0 +1,187 @@
+id_establecimiento,nombre,region,servicio_salud,comuna,tipo_atencion
+201319,Hospital de Alto Hospicio,Tarapacá,Servicio de Salud Tarapacá,Alto Hospicio,Indiferenciado
+01-100,Hospital Regional Dr. Juan Noé Crevani (Arica),Arica y Parinacota,Servicio de Salud Arica y Parinacota,Arica,Indiferenciado
+02-100,Hospital Dr. Ernesto Torres Galdames (Iquique),Tarapacá,Servicio de Salud Tarapacá,Iquique,Indiferenciado
+03-100,Hospital Dr. Leonardo Guzmán (Antofagasta),Antofagasta,Servicio de Salud Antofagasta,Antofagasta,Indiferenciado
+03-101,Hospital Dr. Carlos Cisternas (Calama),Antofagasta,Servicio de Salud Antofagasta,Calama,Indiferenciado
+03-102,Hospital Dr. Marcos Macuada (Tocopilla),Antofagasta,Servicio de Salud Antofagasta,Tocopilla,Indiferenciado
+03-103,Hospital 21 de Mayo (Taltal),Antofagasta,Servicio de Salud Antofagasta,Taltal,Indiferenciado
+03-104,Hospital de Mejillones,Antofagasta,Servicio de Salud Antofagasta,Mejillones,Indiferenciado
+04-100,Hospital San José del Carmen (Copiapó),Atacama,Servicio de Salud Atacama,Copiapó,Indiferenciado
+04-101,Hospital Dr. Jerónimo Méndez Arancibia (Chañaral),Atacama,Servicio de Salud Atacama,Chañaral,Indiferenciado
+04-102,Hospital Dr. Florencio Vargas (Diego de Almagro),Atacama,Servicio de Salud Atacama,Diego de Almagro,Indiferenciado
+04-103,Hospital Provincial del Huasco (Vallenar),Atacama,Servicio de Salud Atacama,Vallenar,Indiferenciado
+04-104,Hospital Dr. Manuel Magalhaes Medling (Huasco),Atacama,Servicio de Salud Atacama,Huasco,Indiferenciado
+05-100,Hospital San Juan de Dios (La Serena),Coquimbo,Servicio de Salud Coquimbo,La Serena,Indiferenciado
+05-101,Hospital San Pablo (Coquimbo),Coquimbo,Servicio de Salud Coquimbo,Coquimbo,Indiferenciado
+05-102,Hospital Dr. Antonio Tirado Lanas (Ovalle),Coquimbo,Servicio de Salud Coquimbo,Ovalle,Indiferenciado
+05-103,Hospital Dr. Humberto Elorza Cortés (Illapel),Coquimbo,Servicio de Salud Coquimbo,Illapel,Indiferenciado
+05-104,Hospital de Salamanca,Coquimbo,Servicio de Salud Coquimbo,Salamanca,Indiferenciado
+05-105,Hospital San Juan de Dios (Combarbalá),Coquimbo,Servicio de Salud Coquimbo,Combarbalá,Indiferenciado
+05-106,Hospital Dr. José Arraño (Andacollo),Coquimbo,Servicio de Salud Coquimbo,Andacollo,Indiferenciado
+05-107,Hospital San Juan de Dios (Vicuña),Coquimbo,Servicio de Salud Coquimbo,Vicuña,Indiferenciado
+05-108,Hospital San Pedro (Los Vilos),Coquimbo,Servicio de Salud Coquimbo,Los Vilos,Indiferenciado
+06-100,Hospital Carlos Van Buren (Valparaíso),Valparaíso,Servicio de Salud Valparaíso San Antonio,Valparaíso,Indiferenciado
+06-103,Hospital Claudio Vicuña (San Antonio),Valparaíso,Servicio de Salud Valparaíso San Antonio,San Antonio,Indiferenciado
+06-105,Hospital San José (Casablanca),Valparaíso,Servicio de Salud Valparaíso San Antonio,Casablanca,Indiferenciado
+07-100,Hospital Dr. Gustavo Fricke (Viña del Mar),Valparaíso,Servicio de Salud Viña del Mar Quillota,Viña del Mar,Indiferenciado
+07-101,Hospital Biprovincial Quillota Petorca,Valparaíso,Servicio de Salud Viña del Mar Quillota,Quillota,Indiferenciado
+07-102,Hospital de Quilpué,Valparaíso,Servicio de Salud Viña del Mar Quillota,Quilpué,Indiferenciado
+07-103,Hospital Dr. Mario Sánchez Vergara (La Calera),Valparaíso,Servicio de Salud Viña del Mar Quillota,Calera,Indiferenciado
+07-104,Hospital Santo Tomás (Limache),Valparaíso,Servicio de Salud Viña del Mar Quillota,Limache,Indiferenciado
+07-105,Hospital San Agustín (La Ligua),Valparaíso,Servicio de Salud Viña del Mar Quillota,La Ligua,Indiferenciado
+07-106,Hospital Dr. Víctor Hugo Moll (Cabildo),Valparaíso,Servicio de Salud Viña del Mar Quillota,Cabildo,Indiferenciado
+07-107,Hospital de Petorca,Valparaíso,Servicio de Salud Viña del Mar Quillota,Petorca,Indiferenciado
+07-108,Hospital Adriana Cousiño (Quintero),Valparaíso,Servicio de Salud Viña del Mar Quillota,Quintero,Indiferenciado
+07-109,Hospital Juana Ross de Edwards (Villa Alemana),Valparaíso,Servicio de Salud Viña del Mar Quillota,Villa Alemana,Indiferenciado
+08-100,Hospital San Camilo de San Felipe,Valparaíso,Servicio de Salud Aconcagua,San Felipe,Indiferenciado
+08-101,Hospital San Juan de Dios (Los Andes),Valparaíso,Servicio de Salud Aconcagua,Los Andes,Indiferenciado
+08-102,Hospital San Francisco (Llaillay),Valparaíso,Servicio de Salud Aconcagua,Llaillay,Indiferenciado
+08-104,Hospital San Antonio (Putaendo),Valparaíso,Servicio de Salud Aconcagua,Putaendo,Indiferenciado
+08-105,Hospital Psiquiátrico Dr. Philippe Pinel (Putaendo),Valparaíso,Servicio de Salud Aconcagua,Putaendo,Indiferenciado
+09-100,Complejo Hospitalario San José (Independencia),Metropolitana,Servicio de Salud Metropolitano Norte,Independencia,Adulto
+09-101,Hospital de Niños Dr. Roberto del Río (Independencia),Metropolitana,Servicio de Salud Metropolitano Norte,Independencia,Indiferenciado
+09-102,Instituto Psiquiátrico Dr. José Horwitz Barak (Recoleta),Metropolitana,Servicio de Salud Metropolitano Norte,Recoleta,Adulto
+09-104,Hospital Comunitario de Til Til,Metropolitana,Servicio de Salud Metropolitano Norte,Tiltil,Indiferenciado
+10-100,Hospital San Juan de Dios (Santiago),Metropolitana,Servicio de Salud Metropolitano Occidente,Santiago,Indiferenciado
+10-110,Instituto Traumatológico Dr. Teodoro Gebauer,Metropolitana,Servicio de Salud Metropolitano Occidente,Santiago,Indiferenciado
+10-120,Hospital Félix Bulnes Cerda,Metropolitana,Servicio de Salud Metropolitano Occidente,Cerro Navia,Indiferenciado
+10-130,Hospital Adalberto Steeger (Talagante),Metropolitana,Servicio de Salud Metropolitano Occidente,Talagante,Indiferenciado
+10-140,Hospital de Peñaflor,Metropolitana,Servicio de Salud Metropolitano Occidente,Peñaflor,Indiferenciado
+10-150,Hospital San José (Melipilla),Metropolitana,Servicio de Salud Metropolitano Occidente,Melipilla,Indiferenciado
+10-160,Hospital de Curacaví,Metropolitana,Servicio de Salud Metropolitano Occidente,Curacaví,Indiferenciado
+11-100,Hospital Clínico San Borja Arriarán,Metropolitana,Servicio de Salud Metropolitano Central,Santiago,Indiferenciado
+11-101,Hospital El Carmen (Maipú),Metropolitana,Servicio de Salud Metropolitano Central,Maipú,Indiferenciado
+11-195,Hospital de Urgencia Asistencia Pública (ex Posta Central),Metropolitana,Servicio de Salud Metropolitano Central,Santiago,Adulto
+12-100,Hospital Del Salvador de Santiago,Metropolitana,Servicio de Salud Metropolitano Oriente,Providencia,Adulto
+12-101,Hospital Dr. Luis Tisné B. (Peñalolén),Metropolitana,Servicio de Salud Metropolitano Oriente,Peñalolén,Adulto
+12-102,Hospital de Niños Dr. Luis Calvo Mackenna,Metropolitana,Servicio de Salud Metropolitano Oriente,Providencia,Infantil
+12-107,Hospital Hanga Roa (Isla de Pascua),Valparaíso,Servicio de Salud Metropolitano Oriente,Isla de Pascua,Indiferenciado
+13-100,Hospital Barros Luco Trudeau (San Miguel),Metropolitana,Servicio de Salud Metropolitano Sur,San Miguel,Adulto
+13-130,Hospital Dr. Exequiel González Cortés (San Miguel),Metropolitana,Servicio de Salud Metropolitano Sur,San Miguel,Infantil
+13-150,Hospital San Luis (Buin),Metropolitana,Servicio de Salud Metropolitano Sur,Buin,Indiferenciado
+13-180,Hospital El Pino (San Bernardo),Metropolitana,Servicio de Salud Metropolitano Sur,San Bernardo,Indiferenciado
+13-190,Hospital Parroquial de San Bernardo,Metropolitana,Servicio de Salud Metropolitano Sur,San Bernardo,Indiferenciado
+14-101,Complejo Hospitalario Dr. Sótero del Río (Puente Alto),Metropolitana,Servicio de Salud Metropolitano Sur Oriente,Puente Alto,Indiferenciado
+14-102,Hospital San José de Maipo,Metropolitana,Servicio de Salud Metropolitano Sur Oriente,San José de Maipo,Indiferenciado
+14-103,Hospital Padre Alberto Hurtado (San Ramón),Metropolitana,Servicio de Salud Metropolitano Sur Oriente,San Ramón,Indiferenciado
+14-105,Hospital Clínico Metropolitano La Florida,Metropolitana,Servicio de Salud Metropolitano Sur Oriente,La Florida,Indiferenciado
+15-100,Hospital Dr. Franco Ravera Zunino (Rancagua),O'Higgins,Servicio de Salud O'Higgins,Rancagua,Indiferenciado
+15-101,Hospital Santa Filomena de Graneros,O'Higgins,Servicio de Salud O'Higgins,Graneros,Indiferenciado
+15-102,Hospital de Coínco,O'Higgins,Servicio de Salud O'Higgins,Coinco,Indiferenciado
+15-103,Hospital Del Salvador de Peumo,O'Higgins,Servicio de Salud O'Higgins,Peumo,Indiferenciado
+15-104,Hospital Dr. Ricardo Valenzuela Sáez (Rengo),O'Higgins,Servicio de Salud O'Higgins,Rengo,Indiferenciado
+15-105,Hospital San Vicente de Tagua Tagua,O'Higgins,Servicio de Salud O'Higgins,San Vicente,Indiferenciado
+15-106,Hospital de Pichidegua,O'Higgins,Servicio de Salud O'Higgins,Pichidegua,Indiferenciado
+15-107,Hospital San Juan de Dios de San Fernando,O'Higgins,Servicio de Salud O'Higgins,San Fernando,Indiferenciado
+15-108,Hospital Mercedes de Chimbarongo,O'Higgins,Servicio de Salud O'Higgins,Chimbarongo,Indiferenciado
+15-109,Hospital de Nancagua,O'Higgins,Servicio de Salud O'Higgins,Nancagua,Indiferenciado
+15-110,Hospital de Santa Cruz,O'Higgins,Servicio de Salud O'Higgins,Santa Cruz,Indiferenciado
+15-111,Hospital de Marchigüe,O'Higgins,Servicio de Salud O'Higgins,Marchihue,Indiferenciado
+15-112,Hospital de Pichilemu,O'Higgins,Servicio de Salud O'Higgins,Pichilemu,Indiferenciado
+15-113,Hospital de Lolol,O'Higgins,Servicio de Salud O'Higgins,Lolol,Indiferenciado
+15-114,Hospital de Litueche,O'Higgins,Servicio de Salud O'Higgins,Litueche,Indiferenciado
+16-100,Hospital San Juan de Dios (Curicó),Maule,Servicio de Salud Maule,Curicó,Indiferenciado
+16-101,Hospital de Teno,Maule,Servicio de Salud Maule,Teno,Indiferenciado
+16-102,Hospital de Molina,Maule,Servicio de Salud Maule,Molina,Indiferenciado
+16-103,Hospital de Hualañé,Maule,Servicio de Salud Maule,Hualañé,Indiferenciado
+16-104,Hospital de Licantén,Maule,Servicio de Salud Maule,Licantén,Indiferenciado
+16-105,Hospital Dr. César Garavagno Burotto (Talca),Maule,Servicio de Salud Maule,Talca,Indiferenciado
+16-106,Hospital de Curepto,Maule,Servicio de Salud Maule,Curepto,Indiferenciado
+16-107,Hospital de Constitución,Maule,Servicio de Salud Maule,Constitución,Indiferenciado
+16-108,Hospital Presidente Carlos Ibáñez del Campo (Linares),Maule,Servicio de Salud Maule,Linares,Indiferenciado
+16-109,Hospital de San Javier,Maule,Servicio de Salud Maule,San Javier,Indiferenciado
+16-110,Hospital San José (Parral),Maule,Servicio de Salud Maule,Parral,Indiferenciado
+16-111,Hospital San Juan de Dios (Cauquenes),Maule,Servicio de Salud Maule,Cauquenes,Indiferenciado
+16-112,Hospital Dr. Benjamín Pedreros (Chanco),Maule,Servicio de Salud Maule,Chanco,Indiferenciado
+17-101,Hospital Clínico Herminda Martín (Chillán),Ñuble,Servicio de Salud Ñuble,Chillán,Indiferenciado
+17-102,Hospital de San Carlos,Ñuble,Servicio de Salud Ñuble,San Carlos,Indiferenciado
+17-103,Hospital Comunitario de Bulnes,Ñuble,Servicio de Salud Ñuble,Bulnes,Indiferenciado
+17-104,Hospital Comunitario de Yungay,Ñuble,Servicio de Salud Ñuble,Yungay,Indiferenciado
+17-106,Hospital Comunitario de Quirihue,Ñuble,Servicio de Salud Ñuble,Quirihue,Indiferenciado
+17-107,Hospital Comunitario de El Carmen,Ñuble,Servicio de Salud Ñuble,El Carmen,Indiferenciado
+17-108,Hospital Comunitario de Coelemu,Ñuble,Servicio de Salud Ñuble,Coelemu,Indiferenciado
+18-100,Hospital Regional Dr. Guillermo Grant Benavente (Concepción),Biobío,Servicio de Salud Concepción,Concepción,Indiferenciado
+18-105,Hospital San José de Coronel,Biobío,Servicio de Salud Concepción,Coronel,Indiferenciado
+18-106,Hospital de Lota,Biobío,Servicio de Salud Concepción,Lota,Indiferenciado
+18-107,Hospital Clorinda Avello (Santa Juana),Biobío,Servicio de Salud Concepción,Santa Juana,Indiferenciado
+18-108,Hospital San Agustín de Florida,Biobío,Servicio de Salud Concepción,Florida,Indiferenciado
+19-100,Hospital Las Higueras (Talcahuano),Biobío,Servicio de Salud Talcahuano,Talcahuano,Indiferenciado
+19-101,Hospital de Tomé,Biobío,Servicio de Salud Talcahuano,Tomé,Indiferenciado
+19-102,Hospital Penco Lirquén,Biobío,Servicio de Salud Talcahuano,Penco,Indiferenciado
+20-101,Complejo Asistencial Dr. Víctor Ríos Ruiz (Los Ángeles),Biobío,Servicio de Salud Biobío,Los Ángeles,Indiferenciado
+20-102,Hospital de Mulchén,Biobío,Servicio de Salud Biobío,Mulchén,Indiferenciado
+20-103,Hospital Comunitario de Nacimiento,Biobío,Servicio de Salud Biobío,Nacimiento,Indiferenciado
+20-104,Hospital Comunitario de Yumbel,Biobío,Servicio de Salud Biobío,Yumbel,Indiferenciado
+20-105,Hospital Comunitario de Laja,Biobío,Servicio de Salud Biobío,Laja,Indiferenciado
+20-106,Hospital Comunitario de Santa Bárbara,Biobío,Servicio de Salud Biobío,Santa Bárbara,Indiferenciado
+20-107,Hospital Comunitario de Huépil,Biobío,Servicio de Salud Biobío,Tucapel,Indiferenciado
+21-109,Hospital Dr. Hernán Henríquez Aravena (Temuco),Araucanía,Servicio de Salud Araucanía Sur,Temuco,Indiferenciado
+21-110,Hospital Dr. Abraham Godoy Peña (Lautaro),Araucanía,Servicio de Salud Araucanía Sur,Lautaro,Indiferenciado
+21-111,Hospital de Galvarino,Araucanía,Servicio de Salud Araucanía Sur,Galvarino,Indiferenciado
+21-112,Hospital de Vilcún,Araucanía,Servicio de Salud Araucanía Sur,Vilcún,Indiferenciado
+21-113,Hospital de Cunco,Araucanía,Servicio de Salud Araucanía Sur,Cunco,Indiferenciado
+21-114,Hospital Intercultural de Nueva Imperial,Araucanía,Servicio de Salud Araucanía Sur,Nueva Imperial,Indiferenciado
+21-115,Hospital de Carahue,Araucanía,Servicio de Salud Araucanía Sur,Carahue,Indiferenciado
+21-116,Hospital de Saavedra,Araucanía,Servicio de Salud Araucanía Sur,Saavedra,Indiferenciado
+21-117,Hospital de Pitrufquén,Araucanía,Servicio de Salud Araucanía Sur,Pitrufquén,Indiferenciado
+21-118,Hospital de Toltén,Araucanía,Servicio de Salud Araucanía Sur,Toltén,Indiferenciado
+21-119,Hospital de Gorbea,Araucanía,Servicio de Salud Araucanía Sur,Gorbea,Indiferenciado
+21-120,Hospital de Loncoche,Araucanía,Servicio de Salud Araucanía Sur,Loncoche,Indiferenciado
+21-121,Hospital de Villarrica,Araucanía,Servicio de Salud Araucanía Sur,Villarrica,Indiferenciado
+21-200,Hospital San Francisco de Pucón,Araucanía,Servicio de Salud Araucanía Sur,Pucón,Indiferenciado
+21-201,Hospital Intercultural Makewe,Araucanía,Servicio de Salud Araucanía Sur,Padre Las Casas,Indiferenciado
+21-932,Complejo Asistencial Padre las Casas,Araucanía,Servicio de Salud Araucanía Sur,Padre Las Casas,Indiferenciado
+22-100,Hospital Base Valdivia,Los Ríos,Servicio de Salud Los Ríos,Valdivia,Indiferenciado
+22-101,Hospital de Corral,Los Ríos,Servicio de Salud Los Ríos,Corral,Indiferenciado
+22-102,Hospital de Los Lagos,Los Ríos,Servicio de Salud Los Ríos,Los Lagos,Indiferenciado
+22-103,Hospital de Lanco,Los Ríos,Servicio de Salud Los Ríos,Lanco,Indiferenciado
+22-104,Hospital Juan Morey (La Unión),Los Ríos,Servicio de Salud Los Ríos,La Unión,Indiferenciado
+22-105,Hospital de Río Bueno,Los Ríos,Servicio de Salud Los Ríos,Río Bueno,Indiferenciado
+22-106,Hospital de Paillaco,Los Ríos,Servicio de Salud Los Ríos,Paillaco,Indiferenciado
+22-200,Hospital Santa Elisa (Mariquina),Los Ríos,Servicio de Salud Los Ríos,Mariquina,Indiferenciado
+22-201,Hospital de Panguipulli,Los Ríos,Servicio de Salud Los Ríos,Panguipulli,Indiferenciado
+23-100,Hospital Base San José de Osorno,Los Lagos,Servicio de Salud Osorno,Osorno,Indiferenciado
+23-101,Hospital de Purranque,Los Lagos,Servicio de Salud Osorno,Purranque,Indiferenciado
+23-102,Hospital de Río Negro,Los Lagos,Servicio de Salud Osorno,Río Negro,Indiferenciado
+23-103,Hospital de Puerto Octay,Los Lagos,Servicio de Salud Osorno,Puerto Octay,Indiferenciado
+23-104,Hospital Futa Sruka Lawenche,Los Lagos,Servicio de Salud Osorno,San Juan de la Costa,Indiferenciado
+23-105,Hospital Pu Mulen Quilacahuín,Los Lagos,Servicio de Salud Osorno,San Pablo,Indiferenciado
+24-105,Hospital de Puerto Montt,Los Lagos,Servicio de Salud Reloncaví,Puerto Montt,Indiferenciado
+24-110,Hospital de Llanquihue,Los Lagos,Servicio de Salud Reloncaví,Llanquihue,Indiferenciado
+24-115,Hospital de Frutillar,Los Lagos,Servicio de Salud Reloncaví,Frutillar,Indiferenciado
+24-120,Hospital de Fresia,Los Lagos,Servicio de Salud Reloncaví,Fresia,Indiferenciado
+24-125,Hospital de Maullín,Los Lagos,Servicio de Salud Reloncaví,Maullín,Indiferenciado
+24-130,Hospital de Calbuco,Los Lagos,Servicio de Salud Reloncaví,Calbuco,Indiferenciado
+24-140,Hospital de Palena,Los Lagos,Servicio de Salud Reloncaví,Palena,Indiferenciado
+24-145,Hospital de Futaleufú,Los Lagos,Servicio de Salud Reloncaví,Futaleufú,Indiferenciado
+24-976,Hospital de Chaitén,Los Lagos,Servicio de Salud Reloncaví,Chaitén,Indiferenciado
+25-100,Hospital Regional de Coyhaique,Aysén,Servicio de Salud Aysén,Coyhaique,Indiferenciado
+25-101,Hospital de Puerto Aysén,Aysén,Servicio de Salud Aysén,Aysén,Indiferenciado
+25-102,Hospital de Chile Chico,Aysén,Servicio de Salud Aysén,Chile Chico,Indiferenciado
+25-103,Hospital Lord Cochrane,Aysén,Servicio de Salud Aysén,Cochrane,Indiferenciado
+25-104,Hospital de Cisnes,Aysén,Servicio de Salud Aysén,Cisnes,Indiferenciado
+26-100,Hospital Clínico de Magallanes (Punta Arenas),Magallanes,Servicio de Salud Magallanes,Punta Arenas,Indiferenciado
+26-101,Hospital Dr. Augusto Essmann Burgos (Natales),Magallanes,Servicio de Salud Magallanes,Natales,Indiferenciado
+26-102,Hospital Dr. Marco Antonio Chamorro (Porvenir),Magallanes,Servicio de Salud Magallanes,Porvenir,Indiferenciado
+26-704,Hospital Comunitario de Puerto Williams,Magallanes,Servicio de Salud Magallanes,Cabo de Hornos,Indiferenciado
+28-109,Hospital Provincial Dr. Rafael Avaría (Curanilahue),Biobío,Servicio de Salud Arauco,Curanilahue,Indiferenciado
+28-110,Hospital de Lebu,Biobío,Servicio de Salud Arauco,Lebu,Indiferenciado
+28-111,Hospital Intercultural Kallvu Llanka (Cañete),Biobío,Servicio de Salud Arauco,Cañete,Indiferenciado
+28-112,Hospital de Contulmo,Biobío,Servicio de Salud Arauco,Contulmo,Indiferenciado
+28-113,Hospital San Vicente de Arauco,Biobío,Servicio de Salud Arauco,Arauco,Indiferenciado
+29-100,Hospital Dr. Mauricio Heyermann (Angol),Araucanía,Servicio de Salud Araucanía Norte,Angol,Indiferenciado
+29-101,Hospital de Purén,Araucanía,Servicio de Salud Araucanía Norte,Purén,Indiferenciado
+29-103,Hospital de Collipulli,Araucanía,Servicio de Salud Araucanía Norte,Collipulli,Indiferenciado
+29-104,Hospital de Traiguén,Araucanía,Servicio de Salud Araucanía Norte,Traiguén,Indiferenciado
+29-106,Hospital San José de Victoria,Araucanía,Servicio de Salud Araucanía Norte,Victoria,Indiferenciado
+29-107,Hospital de Curacautín,Araucanía,Servicio de Salud Araucanía Norte,Curacautín,Indiferenciado
+29-108,Hospital de Lonquimay,Araucanía,Servicio de Salud Araucanía Norte,Lonquimay,Indiferenciado
+33-150,Hospital de Castro,Los Lagos,Servicio de Salud Chiloé,Castro,Indiferenciado
+33-155,Hospital de Ancud,Los Lagos,Servicio de Salud Chiloé,Ancud,Indiferenciado
+33-160,Hospital Comunitario de Achao,Los Lagos,Servicio de Salud Chiloé,Quinchao,Indiferenciado
+33-165,Hospital de Quellón,Los Lagos,Servicio de Salud Chiloé,Quellón,Indiferenciado
+33-170,Hospital Comunitario de Queilén,Los Lagos,Servicio de Salud Chiloé,Queilén,Indiferenciado
+28-324,Consultorio Isabel Jiménez,Biobío,Servicio de Salud Arauco,,Indiferenciado
+28-414,Centro de Salud Familiar Laraquete,Biobío,Servicio de Salud Arauco,,Indiferenciado
+28-328,Centro de Salud Familiar Los Álamos,Biobío,Servicio de Salud Arauco,,Indiferenciado
