@@ -1,0 +1,380 @@
+<title>Urgencias Chile · Tablero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sala de control clínica. Banda de estado arriba, franja de KPIs, carta de control como pieza central,
+   luego grilla 2 columnas de diagnóstico, cierre con el circuito de automatización y acciones DMAIC. */
+:root{
+  --bg:#F3F5F8; --panel:#FFFFFF; --ink:#0B2545; --ink2:#46546B; --muted:#7D879A; --line:#DDE2EA;
+  --blue:#1F5FA8; --blue-soft:#C9D8EC; --orange:#D9731A; --orange-soft:#F4D3B5;
+  --ok:#2E7D5B; --ok-soft:#D7EDE3; --crit:#C0392B; --crit-soft:#F6D8D4; --band:#0B2545; --band-ink:#EAF0F8;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1424; --panel:#111E33; --ink:#E8EEF7; --ink2:#AEBBD0; --muted:#7F8DA5; --line:#22324D;
+  --blue:#6FA4E8; --blue-soft:#24406A; --orange:#F0954A; --orange-soft:#5A3618;
+  --ok:#5BC293; --ok-soft:#173A2C; --crit:#F0705F; --crit-soft:#4A1E1A; --band:#060E1B; --band-ink:#DCE6F4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1424; --panel:#111E33; --ink:#E8EEF7; --ink2:#AEBBD0; --muted:#7F8DA5; --line:#22324D;
+  --blue:#6FA4E8; --blue-soft:#24406A; --orange:#F0954A; --orange-soft:#5A3618;
+  --ok:#5BC293; --ok-soft:#173A2C; --crit:#F0705F; --crit-soft:#4A1E1A; --band:#060E1B; --band-ink:#DCE6F4; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 48px}
+h1,h2,h3{font-family:var(--f-display);font-stretch:85%;letter-spacing:-.01em;text-wrap:balance;margin:0}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font:500 11.5px/1.2 var(--f-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+
+/* Banda de estado */
+.band{background:var(--band);color:var(--band-ink)}
+.band .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;padding-block:10px;font:12.5px/1.4 var(--f-mono)}
+.dot{width:8px;height:8px;border-radius:50%;background:#43C08A;box-shadow:0 0 0 3px rgba(67,192,138,.25);display:inline-block;margin-right:8px}
+@media (prefers-reduced-motion:no-preference){.dot{animation:pulse 2.4s ease-in-out infinite}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(67,192,138,.05)}}
+.band span{opacity:.85}.band b{font-weight:500;opacity:1}
+
+/* Encabezado */
+header.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:end;padding-block:36px 26px;border-bottom:1px solid var(--line)}
+header.hero h1{font-size:clamp(34px,5.2vw,60px);line-height:.98;font-weight:800}
+header.hero h1 em{font-style:normal;color:var(--orange)}
+header.hero p{color:var(--ink2);max-width:60ch;margin:14px 0 0}
+.meta{display:grid;gap:8px;font-size:13px;color:var(--ink2)}
+.meta div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.meta div span:last-child{color:var(--ink);font-family:var(--f-mono);font-size:12.5px;text-align:right}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-bottom:1px solid var(--line)}
+.kpi{padding:20px 16px 18px;border-right:1px solid var(--line);display:grid;gap:6px;align-content:start}
+.kpi:last-child{border-right:0}
+.kpi .v{font:700 34px/1 var(--f-display);font-stretch:80%}
+.kpi .d{font:500 12.5px/1.3 var(--f-mono)}
+.kpi .l{font-size:13px;color:var(--ink2);line-height:1.35}
+.up-bad{color:var(--crit)} .down{color:var(--blue)} .neutral{color:var(--ink2)}
+.kpi.alert{background:var(--crit-soft)}
+
+/* Paneles */
+section{padding-top:30px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:22px;min-width:0}
+.ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px 20px;margin-bottom:14px}
+.ph h2{font-size:24px;font-weight:700;line-height:1.1}
+.ph h3{font-size:19px;font-weight:700;line-height:1.15}
+.ph p{margin:6px 0 0;color:var(--ink2);font-size:14px;max-width:70ch}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.chart{position:relative;width:100%}
+.h-lg{height:360px}.h-md{height:290px}.h-sm{height:250px}
+.note{font-size:13px;color:var(--ink2);margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.note b{color:var(--ink);font-weight:600}
+
+/* Selector */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.seg button{font:500 12.5px var(--f-mono);background:transparent;color:var(--ink2);border:0;padding:7px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.seg button:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+
+/* Leyenda */
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:12px var(--f-mono);color:var(--ink2)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.legend i.pt{width:9px;height:9px;border-radius:50%}
+
+/* Chips de estado */
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 11.5px var(--f-mono);letter-spacing:.03em;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.chip.crit{background:var(--crit-soft);color:var(--crit)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.info{background:var(--blue-soft);color:var(--ink)}
+
+/* Tabla */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:560px}
+th{font:500 11px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line)}
+td.r,th.r{text-align:right}
+.bar{height:6px;background:var(--blue-soft);border-radius:3px;position:relative;min-width:60px}
+.bar span{position:absolute;inset:0 auto 0 0;background:var(--blue);border-radius:3px}
+
+/* Circuito Make */
+.flow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;counter-reset:st}
+.step{position:relative;padding:16px 14px 14px;border-top:3px solid var(--blue);background:var(--bg);margin-right:10px;border-radius:0 0 4px 4px}
+.step:last-child{margin-right:0;border-top-color:var(--orange)}
+.step .k{font:500 11px var(--f-mono);color:var(--muted);letter-spacing:.06em}
+.step h4{font:700 16px/1.2 var(--f-display);font-stretch:88%;margin:6px 0 6px}
+.step p{margin:0;font-size:12.8px;color:var(--ink2);line-height:1.45}
+.step .tool{display:inline-block;margin-top:8px;font:500 11px var(--f-mono);color:var(--ink)}
+
+/* Acciones */
+.acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.act{display:grid;gap:8px;align-content:start;padding-top:14px;border-top:1px solid var(--ink)}
+.act .tag{font:500 11px var(--f-mono);letter-spacing:.08em;color:var(--orange);text-transform:uppercase}
+.act h4{font:700 18px/1.2 var(--f-display);font-stretch:88%;margin:0}
+.act p{margin:0;font-size:13.5px;color:var(--ink2)}
+
+footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:24px;font-size:12.8px;color:var(--ink2)}
+footer a{color:var(--blue)}
+footer p{margin:0 0 6px}
+
+@media (max-width:1000px){
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .kpi:nth-child(3n){border-right:0}
+  .kpi:nth-child(-n+3){border-bottom:1px solid var(--line)}
+  .flow{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}
+  .step:nth-child(3n){margin-right:0}
+  .acts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  header.hero,.grid2,footer{grid-template-columns:minmax(0,1fr)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)}
+  .kpi:nth-child(2n){border-right:0!important}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step{margin-right:0!important}
+  .flow{column-gap:10px}
+  .acts{grid-template-columns:minmax(0,1fr)}
+  .h-lg{height:300px}
+  .wrap{padding-inline:16px}
+}
+</style>
+
+<div class="band"><div class="wrap">
+  <span><span class="dot" aria-hidden="true"></span><b>Monitor Make activo</b></span>
+  <span>Último chequeo: <b>05/10/2026 11:03 (Chile)</b></span>
+  <span>Versión DEIS: <b>05/10/2026 · 42 MB</b></span>
+  <span>Próximo chequeo: <b>lunes 09:00</b></span>
+</div></div>
+
+<div class="wrap">
+<header class="hero">
+  <div>
+    <div class="eyebrow">Red pública de Chile · 186 hospitales · Lean Six Sigma</div>
+    <h1 style="margin-top:10px">Llegan menos pacientes a la urgencia. <em>Se internan más.</em></h1>
+    <p>Tablero de control sobre 52 millones de atenciones de urgencia registradas por el Ministerio de Salud entre 2019 y 2026. Make vigila la fuente cada semana y avisa cuando hay datos nuevos para recalcular.</p>
+  </div>
+  <div class="meta">
+    <div><span>Período</span><span>01/01/2019 – 27/09/2026</span></div>
+    <div><span>Registros hospital-día</span><span class="num">500.054</span></div>
+    <div><span>Atenciones</span><span class="num">52.183.940</span></div>
+    <div><span>Hospitalizaciones</span><span class="num">4.493.350</span></div>
+    <div><span>Comparación</span><span>enero–septiembre, 2019 vs 2026</span></div>
+  </div>
+</header>
+
+<div class="kpis" role="list">
+  <div class="kpi" role="listitem"><div class="eyebrow">Consultas / día</div><div class="v num">19.501</div><div class="d down">▼ 6,6% vs 2019</div><div class="l">Menos demanda total que antes de la pandemia</div></div>
+  <div class="kpi" role="listitem"><div class="eyebrow">Internaciones / día</div><div class="v num">1.755</div><div class="d up-bad">▲ 11,4% vs 2019</div><div class="l">Más pacientes que salen de la urgencia a una cama</div></div>
+  <div class="kpi" role="listitem"><div class="eyebrow">Tasa de internación</div><div class="v num">9,0%</div><div class="d up-bad">▲ 1,5 p.p. (7,5%)</div><div class="l">1 de cada 11 consultas termina hospitalizada</div></div>
+  <div class="kpi" role="listitem"><div class="eyebrow">Consultas 65+</div><div class="v num">18,5%</div><div class="d up-bad">▲ 14,5% en cantidad</div><div class="l">Menores de 5 años: −36,9%</div></div>
+  <div class="kpi" role="listitem"><div class="eyebrow">Cirugías de urgencia</div><div class="v num">65.524</div><div class="d up-bad">▲ 13,7% vs 2019</div><div class="l">Enero a septiembre de cada año</div></div>
+  <div class="kpi alert" role="listitem"><div class="eyebrow">Carta de control</div><div class="v num">5 sem.</div><div class="d up-bad">sobre el LCS en 2026</div><div class="l">Agosto–septiembre seguidas: cambio de nivel, no ruido</div></div>
+</div>
+
+<section id="control">
+  <div class="panel">
+    <div class="ph">
+      <div>
+        <div class="eyebrow">Controlar · Carta I-MR semanal, 143 semanas completas</div>
+        <h2 style="margin-top:6px" id="ctlTitle">Hospitalizaciones desde urgencia por semana</h2>
+        <p id="ctlSub"></p>
+      </div>
+      <div class="seg" role="group" aria-label="Variable de la carta">
+        <button id="bH" aria-pressed="true" type="button">Internaciones</button>
+        <button id="bA" aria-pressed="false" type="button">Consultas</button>
+      </div>
+    </div>
+    <div class="legend" style="margin-bottom:10px">
+      <span><i style="background:var(--blue)"></i>Total semanal</span>
+      <span><i style="background:var(--muted)"></i>Media</span>
+      <span><i style="background:var(--crit)"></i>Límites ±2,66·MR̄</span>
+      <span><i class="pt" style="background:var(--crit)"></i>Fuera de control</span>
+    </div>
+    <div class="chart h-lg"><canvas id="cCtl" role="img" aria-label="Carta de control semanal"></canvas></div>
+    <div class="note" id="ctlNote"></div>
+  </div>
+</section>
+
+<section class="grid2">
+  <div class="panel">
+    <div class="ph"><div><div class="eyebrow">Medir · Línea base ene–sep</div><h3 style="margin-top:6px">Menos consultas, más internaciones</h3><p>Consultas diarias (barras) y tasa de internación (línea). 2020 y 2021 están distorsionados por la pandemia.</p></div></div>
+    <div class="chart h-md"><canvas id="cAnual" role="img" aria-label="Consultas por día y tasa de internación por año"></canvas></div>
+    <div class="legend" style="margin-top:10px"><span><i style="background:var(--blue-soft);height:9px"></i>Consultas / día</span><span><i style="background:var(--orange)"></i>Tasa de internación (%)</span></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div><div class="eyebrow">Analizar · Edad</div><h3 style="margin-top:6px">Cambió el paciente, y cambió la gravedad</h3><p>Tasa de internación por grupo de edad, 2019 vs 2026. La edad explica el 31% de la suba; el resto ocurre dentro de cada grupo.</p></div></div>
+    <div class="chart h-md"><canvas id="cEdad" role="img" aria-label="Tasa de internación por edad"></canvas></div>
+    <div class="legend" style="margin-top:10px"><span><i class="pt" style="background:var(--muted)"></i>2019</span><span><i class="pt" style="background:var(--orange)"></i>2026</span></div>
+  </div>
+</section>
+
+<section class="grid2">
+  <div class="panel">
+    <div class="ph"><div><div class="eyebrow">Analizar · Patrón semanal 2023–2026</div><h3 style="margin-top:6px">El lunes llega 14% más gente</h3><p>Diferencia de cada día contra el promedio diario. El fin de semana baja la demanda; las internaciones tienen su pico el martes.</p></div></div>
+    <div class="chart h-sm"><canvas id="cDow" role="img" aria-label="Índice por día de la semana"></canvas></div>
+    <div class="legend" style="margin-top:10px"><span><i style="background:var(--blue);height:9px"></i>Consultas</span><span><i style="background:var(--orange);height:9px"></i>Internaciones</span></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div><div class="eyebrow">Analizar · Regiones 2025</div><h3 style="margin-top:6px">La tasa de internación va de 4,8% a 12%</h3><p>Una brecha de 2,5 veces entre regiones. Puede reflejar distinta complejidad, disponibilidad de camas o forma de registro; vale auditarla antes de comparar desempeño.</p></div></div>
+    <div class="chart" style="height:380px"><canvas id="cReg" role="img" aria-label="Tasa de internación por región"></canvas></div>
+  </div>
+</section>
+
+<section>
+  <div class="panel">
+    <div class="ph"><div><div class="eyebrow">Analizar · Pareto 2025</div><h3 style="margin-top:6px">44 de 183 hospitales concentran la mitad de las consultas</h3><p>Los 12 servicios de urgencia con más consultas en 2025. Un piloto en este grupo cubre a uno de cada cuatro pacientes de la red hospitalaria.</p></div>
+    <span class="chip info">24% de hospitales → 50% de consultas</span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>Hospital</th><th>Región</th><th class="r">Consultas 2025</th><th style="width:22%"></th><th class="r">Tasa intern.</th></tr></thead>
+      <tbody id="tTop"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="panel">
+    <div class="ph"><div><div class="eyebrow">Controlar · Automatización</div><h3 style="margin-top:6px">Cómo se mantiene al día este análisis</h3><p>Make no procesa los 1,5 GB del archivo: vigila la fuente, deja trazabilidad y avisa. El cálculo pesado queda en SQL y Python, que es donde corresponde.</p></div>
+    <span class="chip ok">Probado: 2 corridas OK</span></div>
+    <div class="flow">
+      <div class="step"><div class="k">LUNES 09:00</div><h4>Chequeo de la fuente</h4><p>Pide solo el encabezado del archivo 2026 del DEIS: fecha de modificación y tamaño.</p><span class="tool">Make · HTTP HEAD</span></div>
+      <div class="step"><div class="k">MEMORIA</div><h4>Compara versiones</h4><p>Lee la última versión vista. Si la fecha no cambió, se detiene ahí.</p><span class="tool">Make · Data store</span></div>
+      <div class="step"><div class="k">TRAZABILIDAD</div><h4>Registro en planilla</h4><p>Cada chequeo queda anotado con fecha, versión, tamaño y si hubo cambio.</p><span class="tool">Make · Google Sheets</span></div>
+      <div class="step"><div class="k">ALERTA</div><h4>Aviso por mail</h4><p>Si hay datos nuevos, guarda la versión y manda el resumen con el enlace.</p><span class="tool">Make · Gmail</span></div>
+      <div class="step"><div class="k">CÁLCULO</div><h4>ETL y KPIs</h4><p>Extracción por streaming, carga en PostgreSQL, vistas de control y KPIs con validaciones.</p><span class="tool">SQL · Python</span></div>
+      <div class="step"><div class="k">SALIDA</div><h4>Tablero y carrusel</h4><p>Se regeneran este tablero, las láminas y el PDF desde el mismo cálculo.</p><span class="tool">HTML · matplotlib</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="ph"><div><div class="eyebrow">Mejorar · Qué haría con esto</div><h2 style="margin-top:6px">Cuatro acciones con dato detrás</h2></div></div>
+  <div class="acts">
+    <div class="act"><div class="tag">Turnos</div><h4>Dotación según la curva semanal</h4><p>Reforzar lunes y martes con horas que hoy están en el fin de semana, cuando llega 14% menos gente.</p></div>
+    <div class="act"><div class="tag">Camas</div><h4>Gestión de altas</h4><p>Las internaciones varían 4,1% semana a semana contra 7,6% de las consultas. La presión sobre las camas es de todo el año, no solo de invierno.</p></div>
+    <div class="act"><div class="tag">Mayores</div><h4>Ruta 65+ desde el triage</h4><p>Son el 37% de las internaciones que salen de la urgencia, con una tasa de 18,2%.</p></div>
+    <div class="act"><div class="tag">Dato faltante</div><h4>Publicar la espera de cama</h4><p>El registro tiene los campos de pacientes esperando cama, pero se publican en cero. Sin ese dato no se controla lo que vive el paciente.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <p><b>Método.</b> DMAIC. Comparación enero–septiembre para evitar el sesgo de año incompleto. Carta I-MR con límites en media ± 2,66 × rango móvil medio. Series semanales cortadas el 27/09/2026 por rezago de carga en los últimos días publicados. Validación cruzada: el total ene–sep 2019 coincide (5.700.840) en dos extracciones independientes.</p>
+    <p><b>Limitaciones.</b> Datos agregados por hospital y día, sin triage ni tiempos de espera. La causa de la suba de la tasa más allá de la edad es una hipótesis.</p>
+  </div>
+  <div>
+    <p><b>Fuente.</b> DEIS, Ministerio de Salud de Chile, Atenciones de urgencia 2019–2026.</p>
+    <p><b>Código.</b> <a href="https://github.com/mperezalaniz/urgencias-chile-lean-six-sigma">github.com/mperezalaniz/urgencias-chile-lean-six-sigma</a></p>
+    <p><b>Autor.</b> Emiliano Pérez Alaniz</p>
+  </div>
+</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const D = {"anual":[{"anio":2019,"aten_dia":20882,"hosp_dia":1576,"tasa":7.54,"cirugias":57647},{"anio":2020,"aten_dia":12936,"hosp_dia":1305,"tasa":10.09,"cirugias":48278},{"anio":2021,"aten_dia":14090,"hosp_dia":1472,"tasa":10.45,"cirugias":50479},{"anio":2022,"aten_dia":19664,"hosp_dia":1492,"tasa":7.59,"cirugias":49442},{"anio":2023,"aten_dia":19460,"hosp_dia":1672,"tasa":8.59,"cirugias":53880},{"anio":2024,"aten_dia":19504,"hosp_dia":1732,"tasa":8.88,"cirugias":59638},{"anio":2025,"aten_dia":19549,"hosp_dia":1736,"tasa":8.88,"cirugias":64783},{"anio":2026,"aten_dia":19501,"hosp_dia":1755,"tasa":9.0,"cirugias":65524}],"limites":{"hosp":{"media":12167,"lcs":13101,"lci":11234},"aten":{"media":138273,"lcs":150557,"lci":125990}},"semanas":[{"s":"2024-01-07","a":132622,"h":11809,"r":16703},{"s":"2024-01-14","a":130529,"h":11706,"r":14647},{"s":"2024-01-21","a":128565,"h":11420,"r":13012},{"s":"2024-01-28","a":129603,"h":11757,"r":12293},{"s":"2024-02-04","a":128624,"h":11481,"r":12202},{"s":"2024-02-11","a":129905,"h":11655,"r":13045},{"s":"2024-02-18","a":129416,"h":11643,"r":13216},{"s":"2024-02-25","a":129252,"h":11679,"r":13629},{"s":"2024-03-03","a":126663,"h":11444,"r":13319},{"s":"2024-03-10","a":127877,"h":11565,"r":14703},{"s":"2024-03-17","a":143559,"h":12039,"r":22216},{"s":"2024-03-24","a":150064,"h":12277,"r":27413},{"s":"2024-03-31","a":142286,"h":11899,"r":22769},{"s":"2024-04-07","a":144267,"h":12057,"r":23239},{"s":"2024-04-14","a":145078,"h":12292,"r":24208},{"s":"2024-04-21","a":149875,"h":12270,"r":28834},{"s":"2024-04-28","a":148396,"h":12036,"r":32136},{"s":"2024-05-05","a":143811,"h":11638,"r":35972},{"s":"2024-05-12","a":147852,"h":12160,"r":40317},{"s":"2024-05-19","a":156901,"h":12715,"r":47415},{"s":"2024-05-26","a":142978,"h":12378,"r":44061},{"s":"2024-06-02","a":142742,"h":12676,"r":35819},{"s":"2024-06-09","a":140415,"h":12751,"r":32059},{"s":"2024-06-16","a":126467,"h":12151,"r":25256},{"s":"2024-06-23","a":114377,"h":11554,"r":20575},{"s":"2024-06-30","a":112608,"h":12023,"r":17933},{"s":"2024-07-07","a":110804,"h":12230,"r":15541},{"s":"2024-07-14","a":117071,"h":12432,"r":15727},{"s":"2024-07-21","a":124038,"h":12352,"r":19819},{"s":"2024-07-28","a":136710,"h":12837,"r":24237},{"s":"2024-08-04","a":133923,"h":12605,"r":27300},{"s":"2024-08-11","a":136232,"h":12528,"r":28150},{"s":"2024-08-18","a":141788,"h":12711,"r":30370},{"s":"2024-08-25","a":145206,"h":12664,"r":31930},{"s":"2024-09-01","a":147489,"h":12501,"r":31929},{"s":"2024-09-08","a":148243,"h":12413,"r":32214},{"s":"2024-09-15","a":146207,"h":12543,"r":31629},{"s":"2024-09-22","a":134396,"h":11197,"r":29404},{"s":"2024-09-29","a":153502,"h":12708,"r":30578},{"s":"2024-10-06","a":149498,"h":12159,"r":28709},{"s":"2024-10-13","a":153054,"h":12539,"r":29992},{"s":"2024-10-20","a":153129,"h":12675,"r":31841},{"s":"2024-10-27","a":151235,"h":12471,"r":30319},{"s":"2024-11-03","a":141236,"h":11510,"r":28906},{"s":"2024-11-10","a":151515,"h":12650,"r":28714},{"s":"2024-11-17","a":153587,"h":12382,"r":28846},{"s":"2024-11-24","a":152899,"h":12348,"r":29764},{"s":"2024-12-01","a":150260,"h":12517,"r":30746},{"s":"2024-12-08","a":147777,"h":11560,"r":31652},{"s":"2024-12-15","a":140039,"h":11761,"r":26744},{"s":"2024-12-22","a":134421,"h":11634,"r":21617},{"s":"2024-12-29","a":130266,"h":11218,"r":18900},{"s":"2025-01-05","a":128680,"h":11091,"r":15955},{"s":"2025-01-12","a":128753,"h":11766,"r":12931},{"s":"2025-01-19","a":126218,"h":11666,"r":11097},{"s":"2025-01-26","a":126694,"h":11901,"r":10325},{"s":"2025-02-02","a":124020,"h":11570,"r":9337},{"s":"2025-02-09","a":124273,"h":11673,"r":9118},{"s":"2025-02-16","a":124389,"h":11196,"r":9433},{"s":"2025-02-23","a":125321,"h":11793,"r":9847},{"s":"2025-03-02","a":122861,"h":11439,"r":10158},{"s":"2025-03-09","a":125746,"h":11705,"r":10898},{"s":"2025-03-16","a":141339,"h":12147,"r":18791},{"s":"2025-03-23","a":150549,"h":12136,"r":26365},{"s":"2025-03-30","a":145823,"h":12008,"r":24700},{"s":"2025-04-06","a":141751,"h":12086,"r":23497},{"s":"2025-04-13","a":143167,"h":12139,"r":23998},{"s":"2025-04-20","a":139703,"h":11518,"r":25597},{"s":"2025-04-27","a":148115,"h":12365,"r":28569},{"s":"2025-05-04","a":140032,"h":11710,"r":29181},{"s":"2025-05-11","a":142808,"h":12049,"r":29734},{"s":"2025-05-18","a":145524,"h":12382,"r":31964},{"s":"2025-05-25","a":142532,"h":11944,"r":31734},{"s":"2025-06-01","a":140002,"h":12111,"r":29351},{"s":"2025-06-08","a":143431,"h":12592,"r":30173},{"s":"2025-06-15","a":138287,"h":12586,"r":29597},{"s":"2025-06-22","a":127886,"h":12309,"r":27450},{"s":"2025-06-29","a":121014,"h":12233,"r":23584},{"s":"2025-07-06","a":118168,"h":12462,"r":19924},{"s":"2025-07-13","a":128403,"h":12256,"r":18937},{"s":"2025-07-20","a":129870,"h":12067,"r":21750},{"s":"2025-07-27","a":139722,"h":12508,"r":26443},{"s":"2025-08-03","a":140324,"h":12570,"r":28017},{"s":"2025-08-10","a":145527,"h":12782,"r":30332},{"s":"2025-08-17","a":146526,"h":12582,"r":31924},{"s":"2025-08-24","a":143743,"h":13874,"r":30790},{"s":"2025-08-31","a":146901,"h":12773,"r":30580},{"s":"2025-09-07","a":145421,"h":12413,"r":30999},{"s":"2025-09-14","a":145653,"h":12575,"r":31223},{"s":"2025-09-21","a":132341,"h":11464,"r":28851},{"s":"2025-09-28","a":153369,"h":12683,"r":29475},{"s":"2025-10-05","a":150315,"h":12239,"r":28562},{"s":"2025-10-12","a":154828,"h":12634,"r":31434},{"s":"2025-10-19","a":152683,"h":12588,"r":31652},{"s":"2025-10-26","a":155740,"h":12564,"r":32211},{"s":"2025-11-02","a":150669,"h":12059,"r":31707},{"s":"2025-11-09","a":155425,"h":12512,"r":30945},{"s":"2025-11-16","a":152175,"h":12334,"r":29776},{"s":"2025-11-23","a":151446,"h":12439,"r":28778},{"s":"2025-11-30","a":147898,"h":12046,"r":25867},{"s":"2025-12-07","a":141323,"h":11914,"r":23247},{"s":"2025-12-14","a":134110,"h":11392,"r":20764},{"s":"2025-12-21","a":129754,"h":11792,"r":19178},{"s":"2025-12-28","a":125106,"h":11107,"r":17324},{"s":"2026-01-04","a":128679,"h":11642,"r":15043},{"s":"2026-01-11","a":130425,"h":12392,"r":13151},{"s":"2026-01-18","a":126901,"h":12163,"r":12081},{"s":"2026-01-25","a":125902,"h":11635,"r":10976},{"s":"2026-02-01","a":124977,"h":11353,"r":10157},{"s":"2026-02-08","a":126561,"h":11487,"r":9978},{"s":"2026-02-15","a":124862,"h":11508,"r":10313},{"s":"2026-02-22","a":125747,"h":11628,"r":10685},{"s":"2026-03-01","a":123811,"h":11819,"r":10987},{"s":"2026-03-08","a":124818,"h":11606,"r":11831},{"s":"2026-03-15","a":139665,"h":12141,"r":18764},{"s":"2026-03-22","a":143860,"h":11923,"r":24987},{"s":"2026-03-29","a":144355,"h":12157,"r":24585},{"s":"2026-04-05","a":138714,"h":11791,"r":21362},{"s":"2026-04-12","a":142744,"h":12509,"r":20049},{"s":"2026-04-19","a":141711,"h":12376,"r":20048},{"s":"2026-04-26","a":141278,"h":12250,"r":20889},{"s":"2026-05-03","a":138595,"h":11963,"r":22304},{"s":"2026-05-10","a":139510,"h":12343,"r":22843},{"s":"2026-05-17","a":146750,"h":12569,"r":26276},{"s":"2026-05-24","a":140875,"h":12045,"r":28105},{"s":"2026-05-31","a":146724,"h":12447,"r":28877},{"s":"2026-06-07","a":150131,"h":12493,"r":31389},{"s":"2026-06-14","a":150516,"h":12342,"r":35272},{"s":"2026-06-21","a":144597,"h":12413,"r":35598},{"s":"2026-06-28","a":133471,"h":12553,"r":32180},{"s":"2026-07-05","a":119954,"h":11978,"r":24970},{"s":"2026-07-12","a":130721,"h":12695,"r":24112},{"s":"2026-07-19","a":123564,"h":11850,"r":23368},{"s":"2026-07-26","a":126838,"h":12305,"r":22597},{"s":"2026-08-02","a":131977,"h":12299,"r":22513},{"s":"2026-08-09","a":137900,"h":12755,"r":25742},{"s":"2026-08-16","a":142627,"h":13159,"r":31384},{"s":"2026-08-23","a":147047,"h":13219,"r":34167},{"s":"2026-08-30","a":145531,"h":13135,"r":32621},{"s":"2026-09-06","a":145209,"h":13225,"r":31249},{"s":"2026-09-13","a":143888,"h":13364,"r":30639},{"s":"2026-09-20","a":130647,"h":12353,"r":26310},{"s":"2026-09-27","a":145409,"h":13038,"r":25795}],"dow":[{"d":0,"a":14.0,"h":5.1},{"d":1,"a":8.2,"h":8.0},{"d":2,"a":4.8,"h":6.6},{"d":3,"a":2.7,"h":5.7},{"d":4,"a":-1.8,"h":2.7},{"d":5,"a":-14.3,"h":-10.8},{"d":6,"a":-13.5,"h":-17.1}],"edad":[{"grupo":"menores_1","at2019":315580,"ho2019":27910,"tasa2019":8.84,"at2026":184751,"ho2026":14315,"tasa2026":7.75},{"grupo":"de_1_a_4","at2019":716384,"ho2019":26945,"tasa2019":3.76,"at2026":465988,"ho2026":20423,"tasa2026":4.38},{"grupo":"de_5_a_14","at2019":963713,"ho2019":31397,"tasa2019":3.26,"at2026":876019,"ho2026":33734,"tasa2026":3.85},{"grupo":"de_15_a_64","at2019":2845212,"ho2019":195994,"tasa2019":6.89,"at2026":2812230,"ho2026":231345,"tasa2026":8.23},{"grupo":"de_65_y_mas","at2019":859951,"ho2019":147873,"tasa2019":17.2,"at2026":984762,"ho2026":179319,"tasa2026":18.21}],"regiones":[{"region":"Maule","at":425685,"tasa":12.02},{"region":"Magallanes","at":105135,"tasa":11.67},{"region":"Metropolitana","at":1602923,"tasa":11.52},{"region":"Coquimbo","at":273541,"tasa":9.07},{"region":"Valparaíso","at":769721,"tasa":8.59},{"region":"Biobío","at":913042,"tasa":7.99},{"region":"Tarapacá","at":154243,"tasa":7.93},{"region":"Antofagasta","at":167887,"tasa":7.9},{"region":"Ñuble","at":301496,"tasa":7.87},{"region":"Los Lagos","at":521822,"tasa":7.79},{"region":"Atacama","at":163679,"tasa":7.53},{"region":"Arica y Parinacota","at":135269,"tasa":7.42},{"region":"Los Ríos","at":295294,"tasa":7.23},{"region":"Araucanía","at":750321,"tasa":6.97},{"region":"O'Higgins","at":532757,"tasa":5.36},{"region":"Aysén","at":134049,"tasa":4.76}],"pareto":[0.0232,0.0419,0.0594,0.0762,0.0925,0.1082,0.1232,0.1379,0.1526,0.167,0.1811,0.1945,0.2075,0.22,0.2322,0.244,0.2557,0.2673,0.2787,0.29,0.3008,0.3115,0.3214,0.3311,0.3409,0.3506,0.3599,0.3692,0.3783,0.3871,0.3959,0.4044,0.4129,0.4212,0.4294,0.4371,0.4446,0.4519,0.4591,0.4661,0.4732,0.4802,0.4871,0.4939,0.5007,0.5074,0.514,0.5206,0.5272,0.5338,0.5404,0.5469,0.5535,0.56,0.5664,0.5728,0.5792,0.5855,0.5916,0.5976,0.6037,0.6096,0.6154,0.6213,0.627,0.6325,0.638,0.6434,0.6488,0.6542,0.6594,0.6646,0.6697,0.6748,0.6797,0.6846,0.6893,0.6941,0.6988,0.7034,0.7079,0.7124,0.7168,0.7212,0.7256,0.7299,0.7343,0.7385,0.7427,0.7468,0.7509,0.7551,0.7592,0.7633,0.7674,0.7714,0.7754,0.7794,0.7833,0.7871,0.7909,0.7946,0.7984,0.802,0.8057,0.8094,0.8131,0.8167,0.8204,0.824,0.8276,0.8311,0.8346,0.8381,0.8416,0.8451,0.8485,0.8519,0.8553,0.8587,0.862,0.8653,0.8686,0.8719,0.8751,0.8783,0.8814,0.8845,0.8877,0.8908,0.8939,0.897,0.9001,0.9031,0.9061,0.9092,0.9121,0.9151,0.918,0.921,0.9238,0.9267,0.9295,0.9323,0.9351,0.9378,0.9405,0.9431,0.9457,0.9483,0.9508,0.9532,0.9556,0.9579,0.9602,0.9624,0.9646,0.9668,0.969,0.9711,0.9731,0.975,0.977,0.9787,0.9804,0.982,0.9836,0.9852,0.9866,0.988,0.9894,0.9908,0.9921,0.9932,0.9942,0.9952,0.9962,0.9971,0.9978,0.9984,0.999,0.9996,1.0],"top":[{"nombre":"Complejo Hospitalario Dr. Sótero del Río (Puente Alto)","region":"Metropolitana","at":168333,"tasa":12.2},{"nombre":"Hospital Regional Dr. Juan Noé Crevani (Arica)","region":"Arica y Parinacota","at":135269,"tasa":7.42},{"nombre":"Hospital Dr. Hernán Henríquez Aravena (Temuco)","region":"Araucanía","at":126682,"tasa":16.04},{"nombre":"Hospital Padre Alberto Hurtado (San Ramón)","region":"Metropolitana","at":121734,"tasa":7.07},{"nombre":"Hospital Félix Bulnes Cerda","region":"Metropolitana","at":118180,"tasa":9.38},{"nombre":"Hospital Regional Dr. Guillermo Grant Benavente (Concepción)","region":"Biobío","at":114045,"tasa":10.85},{"nombre":"Hospital Dr. Gustavo Fricke (Viña del Mar)","region":"Valparaíso","at":108641,"tasa":14.69},{"nombre":"Hospital El Carmen (Maipú)","region":"Metropolitana","at":106591,"tasa":15.18},{"nombre":"Hospital Dr. Franco Ravera Zunino (Rancagua)","region":"O'Higgins","at":106204,"tasa":16.49},{"nombre":"Hospital Las Higueras (Talcahuano)","region":"Biobío","at":104295,"tasa":14.51},{"nombre":"Hospital Base San José de Osorno","region":"Los Lagos","at":102386,"tasa":9.74},{"nombre":"Complejo Asistencial Dr. Víctor Ríos Ruiz (Los Ángeles)","region":"Biobío","at":97024,"tasa":19.66}],"red":[{"anio":2019,"tipo":"Hospital","atenciones":7499423,"atenciones_ene_sep":5700840},{"anio":2019,"tipo":"SAPU","atenciones":8077302,"atenciones_ene_sep":6287904},{"anio":2019,"tipo":"SAR","atenciones":2319195,"atenciones_ene_sep":1741622},{"anio":2020,"tipo":"CEAR","atenciones":45043,"atenciones_ene_sep":25667},{"anio":2020,"tipo":"Hospital","atenciones":4851792,"atenciones_ene_sep":3544599},{"anio":2020,"tipo":"SAPU","atenciones":3973042,"atenciones_ene_sep":2941468},{"anio":2020,"tipo":"SAR","atenciones":2046402,"atenciones_ene_sep":1469610},{"anio":2020,"tipo":"SUR","atenciones":466217,"atenciones_ene_sep":286620},{"anio":2021,"tipo":"CEAR","atenciones":77369,"atenciones_ene_sep":61867},{"anio":2021,"tipo":"Hospital","atenciones":5414412,"atenciones_ene_sep":3846616},{"anio":2021,"tipo":"SAPU","atenciones":4615284,"atenciones_ene_sep":3270265},{"anio":2021,"tipo":"SAR","atenciones":2920892,"atenciones_ene_sep":2055299},{"anio":2021,"tipo":"SUR","atenciones":823637,"atenciones_ene_sep":584016},{"anio":2022,"tipo":"CEAR","atenciones":81518,"atenciones_ene_sep":62748},{"anio":2022,"tipo":"Hospital","atenciones":7351437,"atenciones_ene_sep":5368356},{"anio":2022,"tipo":"SAPU","atenciones":6636383,"atenciones_ene_sep":4838420},{"anio":2022,"tipo":"SAR","atenciones":4231875,"atenciones_ene_sep":3100151},{"anio":2022,"tipo":"SUR","atenciones":1190019,"atenciones_ene_sep":851817},{"anio":2023,"tipo":"CEAR","atenciones":16889,"atenciones_ene_sep":16774},{"anio":2023,"tipo":"Hospital","atenciones":7203849,"atenciones_ene_sep":5312591},{"anio":2023,"tipo":"SAPU","atenciones":6471424,"atenciones_ene_sep":4731813},{"anio":2023,"tipo":"SAR","atenciones":4299559,"atenciones_ene_sep":3148090},{"anio":2023,"tipo":"SUR","atenciones":1202519,"atenciones_ene_sep":868165},{"anio":2024,"tipo":"CEAR","atenciones":180,"atenciones_ene_sep":180},{"anio":2024,"tipo":"Hospital","atenciones":7265467,"atenciones_ene_sep":5344224},{"anio":2024,"tipo":"SAPU","atenciones":6338011,"atenciones_ene_sep":4692872},{"anio":2024,"tipo":"SAR","atenciones":4570661,"atenciones_ene_sep":3357991},{"anio":2024,"tipo":"SUR","atenciones":1261729,"atenciones_ene_sep":905735},{"anio":2025,"tipo":"CEAR","atenciones":0,"atenciones_ene_sep":0},{"anio":2025,"tipo":"Hospital","atenciones":7246864,"atenciones_ene_sep":5336906},{"anio":2025,"tipo":"SAPU","atenciones":6201104,"atenciones_ene_sep":4549168},{"anio":2025,"tipo":"SAR","atenciones":4598041,"atenciones_ene_sep":3361053},{"anio":2025,"tipo":"SUR","atenciones":1289418,"atenciones_ene_sep":933985},{"anio":2026,"tipo":"CEAR","atenciones":0,"atenciones_ene_sep":0},{"anio":2026,"tipo":"Hospital","atenciones":5350696,"atenciones_ene_sep":5323750},{"anio":2026,"tipo":"SAPU","atenciones":4480721,"atenciones_ene_sep":4447784},{"anio":2026,"tipo":"SAR","atenciones":3601818,"atenciones_ene_sep":3573250},{"anio":2026,"tipo":"SUR","atenciones":966275,"atenciones_ene_sep":960227}]};
+const nf = new Intl.NumberFormat('es-CL');
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fmtS = s => { const [y,m,d] = s.split('-'); return `${+d} ${MES[+m-1]} ${y.slice(2)}`; };
+const DIAS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const GR = {menores_1:'< 1 año', de_1_a_4:'1 a 4', de_5_a_14:'5 a 14', de_15_a_64:'15 a 64', de_65_y_mas:'65 y más'};
+let charts = [], ctlVar = 'h';
+
+// Tabla top hospitales
+(function(){
+  const max = D.top[0].at, tb = document.getElementById('tTop');
+  tb.innerHTML = D.top.map((t,i) => `<tr><td class="num mono">${i+1}</td><td>${t.nombre}</td><td>${t.region}</td>
+    <td class="r num">${nf.format(t.at)}</td><td><div class="bar"><span style="width:${(100*t.at/max).toFixed(1)}%"></span></div></td>
+    <td class="r num">${t.tasa.toFixed(1).replace('.',',')}%</td></tr>`).join('');
+})();
+
+function ctlText(){
+  const L = D.limites[ctlVar==='h'?'hosp':'aten'];
+  const k = ctlVar==='h'?'h':'a';
+  const out = D.semanas.filter(w => w[k] > L.lcs || w[k] < L.lci);
+  const hi = out.filter(w => w[k] > L.lcs), lo = out.filter(w => w[k] < L.lci);
+  document.getElementById('ctlTitle').textContent = ctlVar==='h' ? 'Hospitalizaciones desde urgencia por semana' : 'Consultas de urgencia por semana';
+  document.getElementById('ctlSub').textContent = `Media ${nf.format(L.media)} · LCS ${nf.format(L.lcs)} · LCI ${nf.format(L.lci)} · ${out.length} de ${D.semanas.length} semanas fuera de límites.`;
+  document.getElementById('ctlNote').innerHTML = ctlVar==='h'
+    ? `<b>Lectura:</b> las ${lo.length} semanas bajas caen en fiestas de fin de año, verano y Fiestas Patrias. De las ${hi.length} altas, 5 son consecutivas, del 16 de agosto al 13 de septiembre de 2026. Cinco puntos seguidos sobre el límite es un cambio de nivel del proceso, no variación común: hay que investigar la causa ahora.`
+    : `<b>Lectura:</b> las consultas salen de control ${out.length} veces porque el invierno respiratorio las empuja arriba y el verano abajo. Es variación estacional previsible (CV 7,6%), que se planifica con dotación, no con alarmas.`;
+}
+
+function build(){
+  charts.forEach(c => c.destroy()); charts = [];
+  const C = {ink:css('--ink'), ink2:css('--ink2'), muted:css('--muted'), line:css('--line'), blue:css('--blue'),
+    blueS:css('--blue-soft'), orange:css('--orange'), crit:css('--crit'), panel:css('--panel')};
+  Chart.defaults.font.family = css('--f-mono'); Chart.defaults.font.size = 11; Chart.defaults.color = C.ink2;
+  const tip = {backgroundColor:C.ink, titleColor:C.panel, bodyColor:C.panel, padding:10, cornerRadius:4, displayColors:false,
+    titleFont:{family:css('--f-body'), weight:'600'}};
+  const grid = {color:C.line, drawTicks:false}, nogrid = {display:false};
+
+  // Carta de control
+  const L = D.limites[ctlVar==='h'?'hosp':'aten'], k = ctlVar==='h'?'h':'a';
+  const lab = D.semanas.map(w => w.s), val = D.semanas.map(w => w[k]);
+  const isOut = v => v > L.lcs || v < L.lci;
+  const flat = v => lab.map(() => v);
+  charts.push(new Chart(cCtl, {type:'line', data:{labels:lab, datasets:[
+    {data:val, borderColor:C.blue, borderWidth:1.8, tension:.15, fill:false,
+      pointRadius:val.map(v => isOut(v)?4.5:0), pointHoverRadius:5,
+      pointBackgroundColor:val.map(v => isOut(v)?C.crit:C.blue), pointBorderColor:C.panel, pointBorderWidth:1.5},
+    {data:flat(L.lcs), borderColor:C.crit, borderWidth:1.2, borderDash:[5,4], pointRadius:0},
+    {data:flat(L.media), borderColor:C.muted, borderWidth:1.2, pointRadius:0},
+    {data:flat(L.lci), borderColor:C.crit, borderWidth:1.2, borderDash:[5,4], pointRadius:0}]},
+    options:{maintainAspectRatio:false, animation:false, interaction:{mode:'index', intersect:false},
+      plugins:{legend:{display:false}, tooltip:{...tip, filter:i => i.datasetIndex===0,
+        callbacks:{title:i => 'Semana al ' + fmtS(i[0].label), label:i => nf.format(i.raw) + (isOut(i.raw)?'  · fuera de control':'')}}},
+      scales:{x:{grid:nogrid, ticks:{autoSkip:false, maxRotation:0,
+        callback:(v,i) => { const s = lab[i]; const [y,m] = s.split('-'); const prev = lab[i-1];
+          return (!prev || prev.slice(0,7) !== s.slice(0,7)) && ['01','04','07','10'].includes(m) ? `${MES[+m-1]} ${y.slice(2)}` : null; }}},
+        y:{grid, border:{display:false}, ticks:{padding:8, callback:v => nf.format(v)}}}}}));
+
+  // Anual
+  const A = D.anual;
+  charts.push(new Chart(cAnual, {data:{labels:A.map(a => a.anio), datasets:[
+    {type:'line', data:A.map(a => a.tasa), yAxisID:'y1', borderColor:C.orange, backgroundColor:C.orange, borderWidth:2.5,
+      pointRadius:A.map((a,i) => i===0||i===A.length-1?5:3), pointBackgroundColor:C.orange, order:0},
+    {type:'bar', data:A.map(a => a.aten_dia), backgroundColor:A.map(a => (a.anio===2020||a.anio===2021)?C.line:C.blueS), borderRadius:2, yAxisID:'y', order:1}]},
+    options:{maintainAspectRatio:false, animation:false,
+      plugins:{legend:{display:false}, tooltip:{...tip, callbacks:{label:i => i.datasetIndex===0 ? `Tasa: ${i.raw.toFixed(2).replace('.',',')}%` : `Consultas/día: ${nf.format(i.raw)}`}}},
+      scales:{x:{grid:nogrid}, y:{grid, border:{display:false}, beginAtZero:true, ticks:{callback:v => nf.format(v)}},
+        y1:{position:'right', min:6, max:11, grid:nogrid, border:{display:false}, ticks:{callback:v => v + '%', color:C.orange}}}}}));
+
+  // Edad: tasa 2019 vs 2026 (dumbbell con barras flotantes)
+  const E = D.edad;
+  charts.push(new Chart(cEdad, {type:'bar', data:{labels:E.map(e => GR[e.grupo]), datasets:[
+    {data:E.map(e => [Math.min(e.tasa2019,e.tasa2026), Math.max(e.tasa2019,e.tasa2026)]), backgroundColor:C.line, barThickness:4, order:2},
+    {type:'scatter', data:E.map((e,i) => ({x:e.tasa2019, y:GR[e.grupo]})), backgroundColor:C.muted, pointRadius:6, order:1},
+    {type:'scatter', data:E.map((e,i) => ({x:e.tasa2026, y:GR[e.grupo]})), backgroundColor:C.orange, pointRadius:7, order:0}]},
+    options:{indexAxis:'y', maintainAspectRatio:false, animation:false,
+      plugins:{legend:{display:false}, tooltip:{...tip, callbacks:{
+        title:i => i[0].label,
+        label:i => { const e = E[i.dataIndex]; const ch = 100*(e.at2026/e.at2019-1);
+          return [`Tasa 2019: ${e.tasa2019.toFixed(1).replace('.',',')}%  →  2026: ${e.tasa2026.toFixed(1).replace('.',',')}%`,
+                  `Consultas: ${ch>0?'+':''}${ch.toFixed(1).replace('.',',')}% vs 2019`]; }}, filter:i => i.datasetIndex===2}},
+      scales:{x:{min:0, max:20, grid, border:{display:false}, ticks:{callback:v => v + '%'}}, y:{type:'category', labels:E.map(e => GR[e.grupo]), grid:nogrid}}}}));
+
+  // Día de la semana
+  charts.push(new Chart(cDow, {type:'bar', data:{labels:D.dow.map(x => DIAS[x.d]), datasets:[
+    {data:D.dow.map(x => x.a), backgroundColor:C.blue, borderRadius:2, barPercentage:.75, categoryPercentage:.7},
+    {data:D.dow.map(x => x.h), backgroundColor:C.orange, borderRadius:2, barPercentage:.75, categoryPercentage:.7}]},
+    options:{maintainAspectRatio:false, animation:false,
+      plugins:{legend:{display:false}, tooltip:{...tip, callbacks:{label:i => `${i.datasetIndex?'Internaciones':'Consultas'}: ${i.raw>0?'+':''}${i.raw.toFixed(1).replace('.',',')}%`}}},
+      scales:{x:{grid:nogrid}, y:{grid, border:{display:false}, ticks:{callback:v => (v>0?'+':'') + v + '%'}}}}}));
+
+  // Regiones
+  const R = D.regiones;
+  charts.push(new Chart(cReg, {type:'bar', data:{labels:R.map(r => r.region), datasets:[
+    {data:R.map(r => r.tasa), backgroundColor:R.map(r => r.tasa > 11 ? C.orange : r.tasa < 6 ? C.muted : C.blueS), borderRadius:2, barThickness:14}]},
+    options:{indexAxis:'y', maintainAspectRatio:false, animation:false,
+      plugins:{legend:{display:false}, tooltip:{...tip, callbacks:{label:i => [`Tasa: ${i.raw.toFixed(1).replace('.',',')}%`, `Consultas 2025: ${nf.format(R[i.dataIndex].at)}`]}}},
+      scales:{x:{min:0, max:13, grid, border:{display:false}, ticks:{callback:v => v + '%'}}, y:{grid:nogrid, ticks:{font:{family:css('--f-body'), size:12}, color:C.ink}}}}}));
+}
+
+function setVar(v){ ctlVar = v; bH.setAttribute('aria-pressed', v==='h'); bA.setAttribute('aria-pressed', v==='a'); ctlText(); build(); }
+bH.onclick = () => setVar('h'); bA.onclick = () => setVar('a');
+ctlText();
+function start(){ if (window.Chart) build(); else setTimeout(start, 60); }
+start();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', build);
+new MutationObserver(build).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+</script>

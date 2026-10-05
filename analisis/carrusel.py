@@ -30,7 +30,7 @@ BG, NAVY, INK2, MUTED, GRID = "#F6F4EF", "#0B2545", "#4A5568", "#8A94A6", "#E3E0
 BLUE, ORANGE, PALEBLUE, PALEORANGE, RED = "#1F5FA8", "#D9731A", "#C9D8EC", "#F2C9A5", "#C0392B"
 AUTHOR = "Emiliano Pérez Alaniz"
 SOURCE = "Fuente: DEIS-Minsal Chile, atenciones de urgencia 2019-2026 · Cálculo propio"
-N = 10
+N = 12
 
 # ------------------------------------------------------------------ datos
 d = pd.read_csv(os.path.join(RAW, "urg_chile_hospital_dia.csv"), dtype={"id_establecimiento": str})
@@ -120,6 +120,16 @@ h25 = d[d.anio == 2025].groupby("id").atenciones.sum().sort_values(ascending=Fal
 cum = h25.cumsum() / h25.sum()
 K["hosp_50"], K["hosp_n25"] = int((cum <= 0.5).sum()), len(h25)
 
+# Regiones 2025: tasa de internación
+hd = pd.read_csv(os.path.join(RAW, "hospitales.csv"), dtype={"id_establecimiento": str})
+hd["id"] = hd.id_establecimiento.str.strip()
+reg = d[d.anio == 2025].join(hd.drop_duplicates("id").set_index("id")[["region"]], on="id")
+assert reg.region.notna().all()
+reg = reg.groupby("region")[["atenciones", "hosp"]].sum()
+reg["tasa"] = 100 * reg.hosp / reg.atenciones
+reg = reg.sort_values("tasa")
+K["reg_max"], K["reg_min"] = reg.tasa.max(), reg.tasa.min()
+
 with open(os.path.join(ROOT, "analisis", "kpis.json"), "w") as f:
     json.dump({k: (round(float(v), 3) if isinstance(v, (float, np.floating)) else (v if isinstance(v, str) else int(v))) for k, v in K.items()}, f,
               indent=1, ensure_ascii=False)
@@ -203,7 +213,7 @@ for i, (v, l) in enumerate(big):
     x = 0.07 + i * 0.30
     fig.text(x, 0.30, v, fontsize=40, color="white", weight="bold")
     fig.text(x, 0.285, l, fontsize=15, color="#9FB3CC", va="top", linespacing=1.3)
-fig.text(0.07, 0.17, "SQL (PostgreSQL)  ·  Python  ·  DMAIC", fontsize=16, color="#9FB3CC")
+fig.text(0.07, 0.17, "SQL (PostgreSQL)  ·  Python  ·  DMAIC  ·  Monitor automático en Make", fontsize=16, color="#9FB3CC")
 fig.text(0.07, 0.11, AUTHOR, fontsize=22, color="white", weight="bold")
 fig.text(0.07, 0.085, "Enfermero · Salud ocupacional y emergencias · Datos", fontsize=15, color="#9FB3CC")
 fig.text(0.93, 0.065, "desliza  ›", fontsize=15, color="#F2A65A", ha="right", weight="medium")
@@ -347,7 +357,7 @@ save(fig, 7)
 
 # 8 CARTA DE CONTROL ---------------------------------------------------------------
 fig = canvas()
-header(fig, "Hallazgo 6", "Carta de control: estable\ntodo el año, hasta ahora")
+header(fig, "Hallazgo 6", "Carta de control: 5 semanas\nseguidas sobre el techo")
 ax = fig.add_axes([0.10, 0.28, 0.83, 0.46])
 style_ax(ax)
 m, ucl, lcl, _ = H
@@ -365,11 +375,60 @@ ax.set_xticks(pd.to_datetime(["2024-01-01", "2025-01-01", "2026-01-01"]))
 ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%Y"))
 subtitle(fig, "Carta I-MR: hospitalizaciones semanales desde urgencia, red pública de Chile")
 takeaway(fig, f"{K['fuera_hosp']} de {K['semanas']} semanas fuera de límites (en consultas, {K['fuera_aten']}). Pero {K['fuera_hosp_alto_2026']} de\n"
-              f"las {K['fuera_hosp_alto']} que superan el techo son de agosto-septiembre de 2026: alerta actual.")
+              f"las {K['fuera_hosp_alto']} que superan el techo son de 2026, seguidas, entre agosto y septiembre.")
 footer(fig, 8)
 save(fig, 8)
 
-# 9 QUÉ HARÍA -----------------------------------------------------------------------
+# 9 REGIONES -------------------------------------------------------------------------
+fig = canvas()
+header(fig, "Hallazgo 7", "Según la región, la tasa\nde internación se duplica")
+ax = fig.add_axes([0.30, 0.25, 0.60, 0.50])
+ax.set_facecolor(BG)
+for sp in ["top", "right", "left"]:
+    ax.spines[sp].set_visible(False)
+ax.spines["bottom"].set_color(GRID)
+ax.tick_params(colors=INK2, labelsize=13, length=0)
+ax.grid(axis="x", color=GRID, lw=1)
+ax.set_axisbelow(True)
+nat = 100 * es.loc[2025, "hosp"] / es.loc[2025, "atenciones"]
+cl = [ORANGE if v > 11 else (MUTED if v < 6 else PALEBLUE) for v in reg.tasa]
+ax.barh(reg.index, reg.tasa, color=cl, height=0.68)
+for i, v in enumerate(reg.tasa):
+    ax.text(v + 0.15, i, f1(v), va="center", fontsize=12.5, color=NAVY, weight="bold" if v > 11 or v < 6 else "normal")
+ax.set_xlim(0, 13.5)
+ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f1(v, 0) + "%"))
+subtitle(fig, "% de consultas de urgencia que terminan en internación, hospitales públicos, 2025", y=0.775)
+takeaway(fig, f"De {f1(K['reg_min'])}% en Aysén a {f1(K['reg_max'])}% en el Maule. Puede ser complejidad, camas\n"
+              "o forma de registrar: hay que auditarlo antes de comparar desempeño.", y=0.13)
+footer(fig, 9)
+save(fig, 9)
+
+# 10 AUTOMATIZACIÓN CON MAKE --------------------------------------------------------
+fig = canvas(NAVY)
+fig.text(0.07, 0.935, "CONTROLAR", fontsize=17, color="#F2A65A", weight="bold")
+fig.text(0.07, 0.905, "Un análisis que se\nactualiza solo", fontsize=40, color="white", weight="bold", va="top",
+         linespacing=1.1)
+fig.text(0.07, 0.77, "Todos los lunes a las 9:00, Make revisa la fuente del Minsal.", fontsize=17, color=PALEBLUE)
+flujo = [("1", "Chequea el archivo", "Pide solo el encabezado: fecha y tamaño.", "Make · HTTP"),
+         ("2", "Compara versiones", "Si no cambió, se detiene ahí.", "Make · Data store"),
+         ("3", "Deja registro", "Cada chequeo queda anotado en una planilla.", "Make · Google Sheets"),
+         ("4", "Avisa", "Si hay datos nuevos, llega un mail con el resumen.", "Make · Gmail"),
+         ("5", "Recalcula", "ETL, KPIs, carta de control, tablero y carrusel.", "SQL · Python")]
+for i, (n_, t, desc, tool) in enumerate(flujo):
+    y = 0.68 - i * 0.105
+    fig.patches.append(FancyBboxPatch((0.07, y - 0.04), 0.86, 0.083, boxstyle="round,pad=0.004,rounding_size=0.012",
+                                      transform=fig.transFigure, fc="#13335C", ec="none"))
+    fig.text(0.115, y, n_, fontsize=30, color="#F2A65A", weight="bold", va="center", ha="center")
+    fig.text(0.17, y + 0.014, t, fontsize=19, color="white", weight="bold", va="center")
+    fig.text(0.17, y - 0.018, desc, fontsize=14, color=PALEBLUE, va="center")
+    fig.text(0.91, y + 0.014, tool, fontsize=12, color="#9FB3CC", va="center", ha="right")
+fig.text(0.07, 0.15, "Make no procesa 1,5 GB: vigila, registra y avisa. El cálculo queda en\n"
+                     "SQL y Python. Cada herramienta en lo que mejor hace.", fontsize=15.5, color="white",
+         va="top", linespacing=1.4)
+footer(fig, 10, dark=True)
+save(fig, 10)
+
+# 11 QUÉ HARÍA -----------------------------------------------------------------------
 fig = canvas()
 header(fig, "Mejorar y controlar", "Qué haría con\nestos datos")
 recs = [("Turnos según la curva semanal", "Reforzar lunes y martes; el fin de semana llega 14% menos\ngente. Misma dotación, mejor distribuida."),
@@ -384,10 +443,10 @@ for i, (t, desc) in enumerate(recs):
                                       transform=fig.transFigure, fc=ORANGE, ec="none"))
     fig.text(0.11, y + 0.03, t, fontsize=20, color=NAVY, weight="bold", va="center")
     fig.text(0.11, y - 0.016, desc, fontsize=14.5, color=INK2, va="center", linespacing=1.35)
-footer(fig, 9)
-save(fig, 9)
+footer(fig, 11)
+save(fig, 11)
 
-# 10 CIERRE ---------------------------------------------------------------------------
+# 12 CIERRE ---------------------------------------------------------------------------
 fig = canvas(NAVY)
 fig.text(0.07, 0.90, "CONCLUSIÓN", fontsize=18, color="#F2A65A", weight="bold")
 fig.text(0.07, 0.87, "Para que la urgencia\natienda más rápido,\nhay que mirar las camas.", fontsize=40,
@@ -395,9 +454,10 @@ fig.text(0.07, 0.87, "Para que la urgencia\natienda más rápido,\nhay que mirar
 items = [f"Hay {f1(-K['chg_aten'], 0)}% menos consultas por día que en 2019, pero {f1(K['chg_hosp'], 0)}% más internaciones.",
          f"Los mayores de 65 crecen y los niños menores de 5 bajan {f1(-K['chg_u5'], 0)}%.",
          "La demanda tiene patrón: lunes y semanas de invierno se pueden planificar.",
-         "Las camas trabajan al límite todo el año, y en 2026 pasaron el techo."]
+         "Las camas trabajan al límite todo el año, y en 2026 pasaron el techo.",
+         "El monitor en Make avisa cada vez que el Minsal publica datos nuevos."]
 for i, t in enumerate(items):
-    y = 0.64 - i * 0.07
+    y = 0.655 - i * 0.062
     fig.text(0.07, y, "›", fontsize=24, color="#F2A65A", weight="bold", va="center")
     fig.text(0.11, y, t, fontsize=16.5, color=PALEBLUE, va="center")
 fig.text(0.07, 0.31, "Limitaciones: datos agregados por día y hospital, sin triage ni tiempos de espera\n"
@@ -407,9 +467,9 @@ fig.text(0.07, 0.31, "Limitaciones: datos agregados por día y hospital, sin tri
 fig.text(0.07, 0.19, "Fui enfermero de emergencias. ¿Lo ves igual\ndesde tu guardia? Te leo en comentarios.",
          fontsize=21, color="white", weight="medium", va="top", linespacing=1.3)
 fig.text(0.07, 0.085, AUTHOR, fontsize=19, color="white", weight="bold")
-fig.text(0.07, 0.062, "Código y datos: github.com/mperezalaniz/urgencias-chile-lean-six-sigma", fontsize=12.5, color="#9FB3CC")
+fig.text(0.07, 0.062, "Código, datos y tablero interactivo: github.com/mperezalaniz/urgencias-chile-lean-six-sigma", fontsize=12.5, color="#9FB3CC")
 fig.text(0.93, 0.035, f"{N}/{N}", fontsize=13, color="#9FB3CC", ha="right")
-save(fig, 10)
+save(fig, 12)
 
 pdf = os.path.join(ROOT, "docs", "Carrusel_Urgencias_Chile.pdf")
 with open(pdf, "wb") as f:

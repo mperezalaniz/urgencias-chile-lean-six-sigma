@@ -1,0 +1,21 @@
+{"name": "Monitor urgencias Chile (DEIS)", "metadata": {"version": 1, "scenario": {"roundtrips": 1, "maxErrors": 3, "autoCommit": true, "sequential": false, "confidential": false, "dataloss": false, "dlq": false}},
+ "flow": [
+  {"id": 1, "module": "http:MakeRequest", "version": 4, "parameters": {"authenticationType": "noAuth"},
+   "mapper": {"url": "https://repositoriodeis.minsal.cl/SistemaAtencionesUrgencia/AtencionesUrgencia2026.zip", "method": "head", "parseResponse": false, "stopOnHttpError": true, "allowRedirects": true, "shareCookies": false, "requestCompressedContent": true},
+   "metadata": {"designer": {"x": 0, "y": 0, "name": "Chequear archivo DEIS"}}},
+  {"id": 2, "module": "datastore:GetRecord", "version": 1, "parameters": {"datastore": null},
+   "mapper": {"key": "deis_urgencias_2026", "returnWrapped": false},
+   "metadata": {"designer": {"x": 300, "y": 0, "name": "Última versión vista"}}},
+  {"id": 3, "module": "google-sheets:addRow", "version": 2, "parameters": {"__IMTCONN__": null},
+   "mapper": {"mode": "map", "insertUnformatted": false, "spreadsheetId": "ID_DE_TU_PLANILLA", "sheetId": "Registro", "tableFirstRow": "A1:Z1", "valueInputOption": "USER_ENTERED",
+     "values": {"0": "{{formatDate(now; \"YYYY-MM-DD HH:mm\"; \"America/Santiago\")}}", "1": "{{1.headers.`last-modified`}}", "2": "{{1.headers.`content-length`}}", "3": "{{if(1.headers.`last-modified` != 2.last_modified; \"SI\"; \"no\")}}"}},
+   "metadata": {"designer": {"x": 600, "y": 0, "name": "Registrar chequeo"}}},
+  {"id": 4, "module": "datastore:AddRecord", "version": 1, "parameters": {"datastore": null},
+   "filter": {"name": "Hay datos nuevos", "conditions": [[{"a": "{{1.headers.`last-modified`}}", "o": "text:notequal", "b": "{{2.last_modified}}"}]]},
+   "mapper": {"key": "deis_urgencias_2026", "overwrite": true, "data": {"last_modified": "{{1.headers.`last-modified`}}", "content_length": "{{1.headers.`content-length`}}", "checked_at": "{{now}}"}},
+   "metadata": {"designer": {"x": 900, "y": 0, "name": "Guardar nueva versión"}}},
+  {"id": 5, "module": "google-email:sendAnEmail", "version": 4, "parameters": {"__IMTCONN__": null},
+   "mapper": {"to": ["TU_EMAIL@ejemplo.com"], "subject": "Urgencias Chile: el DEIS publicó datos nuevos", "bodyType": "rawHtml",
+     "content": "<p>Hola Emiliano,</p><p>El Ministerio de Salud de Chile actualizó el archivo de atenciones de urgencia 2026.</p><ul><li>Última actualización: {{1.headers.`last-modified`}}</li><li>Versión anterior: {{ifempty(2.last_modified; \"sin registro previo\")}}</li><li>Tamaño: {{round(1.headers.`content-length` / 1048576)}} MB</li></ul><p>Toca correr <code>python analisis/carrusel.py</code> para actualizar KPIs, carta de control y tablero.</p><p>Archivo: https://repositoriodeis.minsal.cl/SistemaAtencionesUrgencia/AtencionesUrgencia2026.zip<br>Registro: https://docs.google.com/spreadsheets/d/ID_DE_TU_PLANILLA</p><p>Monitor automático en Make</p>"},
+   "metadata": {"designer": {"x": 1200, "y": 0, "name": "Avisar por Gmail"}}}
+ ]}

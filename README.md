@@ -2,6 +2,8 @@
 
 **Análisis Lean Six Sigma de las urgencias de los hospitales públicos de Chile, 2019 a 2026, con datos oficiales del Ministerio de Salud**
 
+Monitor automático en Make + tablero ejecutivo interactivo
+
 Autor: Emiliano Pérez Alaniz · Enfermero con experiencia en emergencias y salud ocupacional · SQL (PostgreSQL) · Python
 
 ![Portada](docs/img/slide_01.png)
@@ -26,7 +28,23 @@ Autor: Emiliano Pérez Alaniz · Enfermero con experiencia en emergencias y salu
 3. **La edad no lo explica todo.** Si en 2026 se aplicaran las tasas de internación de 2019 a la mezcla de edades actual, la tasa sería 8,0% y no 9,0%. La edad explica el 31% de la suba; el resto viene de tasas más altas dentro de cada grupo (de 15 a 64 años pasó de 6,9% a 8,2%). Una hipótesis posible, no comprobada con estos datos, es que los casos leves se están atendiendo en los SAR, que duplicaron su volumen entre 2019 y 2025 (de 2,3 a 4,6 millones de atenciones).
 4. **La demanda tiene un patrón previsible.** El lunes llega un 14% más de gente que el promedio y el fin de semana un 14% menos.
 5. **El invierno llena la sala de espera, no las camas.** Las consultas semanales varían 7,6% (picos respiratorios); las hospitalizaciones, solo 4,1%. La presión sobre las camas es estructural.
-6. **Carta de control I-MR de hospitalizaciones semanales.** 11 de 143 semanas quedan fuera de límites (en consultas son 38). Las semanas bajas coinciden con fiestas de fin de año, verano y Fiestas Patrias. Pero 5 de las 6 semanas que superan el límite superior son de agosto y septiembre de 2026: es una señal de alerta actual.
+6. **Carta de control I-MR de hospitalizaciones semanales.** 11 de 143 semanas quedan fuera de límites (en consultas son 38). Las semanas bajas coinciden con fiestas de fin de año, verano y Fiestas Patrias. Pero 5 de las 6 semanas que superan el límite superior son de 2026 y seguidas, del 16 de agosto al 13 de septiembre: es un cambio de nivel, no variación común.
+7. **La tasa de internación depende mucho de la región.** En 2025 va de 4,8% (Aysén) a 12,0% (Maule). Puede reflejar complejidad, disponibilidad de camas o forma de registro; hay que auditarlo antes de comparar desempeño entre servicios.
+
+## Monitor automático con Make
+
+El análisis no queda congelado. Un escenario de Make (`make/monitor_urgencias_chile.blueprint.json`) corre todos los lunes a las 9:00:
+
+```
+HTTP HEAD al archivo 2026 del DEIS → Data store (última versión vista) → Google Sheets (registro de cada chequeo)
+   → [filtro: cambió la fecha de modificación] → Data store (guarda la nueva versión) → Gmail (aviso con el resumen)
+```
+
+Make no descarga ni procesa el archivo de 1,5 GB: solo pide el encabezado (fecha y tamaño), deja trazabilidad y avisa. Cuando llega el aviso se corre el pipeline de SQL y Python, que regenera KPIs, carta de control, tablero y carrusel. Probado el 05/10/2026: la primera corrida detectó la versión nueva y avisó; la segunda registró el chequeo sin cambios y no mandó mail.
+
+## Tablero ejecutivo
+
+`docs/tablero.html` es un tablero interactivo de una sola página (abrir en el navegador): KPIs, carta I-MR con selector internaciones/consultas, línea base anual, tasa por edad, patrón semanal, ranking regional, Pareto de hospitales, circuito de automatización y acciones DMAIC. Se genera con `python analisis/tablero_datos.py`.
 
 ## Qué haría con esto (Mejorar y Controlar)
 
@@ -54,8 +72,10 @@ sql/01_schema.sql                       modelo de datos (esquema urg)
 sql/00_carga.sql                        carga y limpieza
 sql/02_kpis.sql                         vistas: línea base, día de semana, Pareto, carta I-MR, edad
 etl/extraccion_navegador.js             extracción desde los zips del DEIS
-analisis/carrusel.py                    cálculo de KPIs (analisis/kpis.json) y gráficos
-docs/                                   láminas y carrusel en PDF
+analisis/carrusel.py                    cálculo de KPIs (analisis/kpis.json) y carrusel de 12 láminas
+analisis/tablero_datos.py               series del tablero (analisis/tablero.json) y docs/tablero.html
+make/monitor_urgencias_chile.blueprint.json   escenario de Make (importable en Make)
+docs/                                   tablero, láminas, carrusel en PDF y post
 ```
 
 ## Cómo reproducir
@@ -66,6 +86,7 @@ psql -f sql/00_carga.sql
 psql -f sql/02_kpis.sql
 pip install pandas matplotlib img2pdf
 python analisis/carrusel.py
+python analisis/tablero_datos.py
 ```
 
 ## Limitaciones
